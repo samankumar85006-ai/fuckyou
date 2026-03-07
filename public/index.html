@@ -5,347 +5,284 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bajaj Finance - Instant Loan Approval</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #f7931e 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+html{
+font-size:16px;
+-webkit-text-size-adjust:100%;
+}
 
-        .container {
-            background: #fff;
-            border-radius: 25px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-            max-width: 480px;
-            width: 100%;
-            overflow: hidden;
-            animation: slideUp 0.5s ease-out;
-        }
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+background:#f5f7fb;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+color:#1f2937;
+}
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* MAIN CONTAINER */
 
-        .header {
-            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 50%, #f7931e 100%);
-            padding: 35px 25px;
-            text-align: center;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
+.container{
+width:100%;
+max-width:420px;
+background:#ffffff;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 10px 35px rgba(0,0,0,0.08);
+}
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
+/* HEADER */
 
-        .logo {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: 800;
-            color: #f7931e;
-            box-shadow: 0 15px 35px rgba(247, 147, 30, 0.3);
-            position: relative;
-            z-index: 2;
-        }
+.header{
+background:#ffffff;
+padding:26px 18px 20px;
+text-align:center;
+border-bottom:1px solid #f1f1f1;
+}
 
-        .header h1 {
-            font-size: 26px;
-            margin-bottom: 8px;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
-        }
+.logo{
+width:60px;
+height:60px;
+margin:auto;
+border-radius:14px;
+background:#0f4c81;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:700;
+color:#fff;
+margin-bottom:10px;
+}
 
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-            position: relative;
-            z-index: 2;
-        }
+.header h1{
+font-size:19px;
+font-weight:700;
+color:#111827;
+margin-bottom:4px;
+}
 
-        .progress-bar {
-            display: flex;
-            background: rgba(255,255,255,0.2);
-            border-radius: 12px;
-            padding: 3px;
-            margin: 0 25px 30px;
-            position: relative;
-            z-index: 2;
-        }
+.header p{
+font-size:13px;
+color:#6b7280;
+}
 
-        .progress-step {
-            flex: 1;
-            height: 8px;
-            border-radius: 10px;
-            transition: all 0.4s ease;
-            position: relative;
-        }
+/* PROGRESS */
 
-        .progress-step.active {
-            background: #fff;
-            box-shadow: 0 0 15px rgba(255,255,255,0.5);
-        }
+.progress-bar{
+display:flex;
+gap:6px;
+margin-top:12px;
+justify-content:center;
+}
 
-        .form-container {
-            padding: 35px 30px 30px;
-        }
+.progress-step{
+height:6px;
+width:60px;
+border-radius:20px;
+background:#e5e7eb;
+transition:.3s;
+}
 
-        .step {
-            display: none;
-            animation: fadeInUp 0.4s ease-out;
-        }
+.progress-step.active{
+background:#0f4c81;
+}
 
-        .step.active {
-            display: block;
-        }
+/* FORM */
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.form-container{
+padding:20px 18px 22px;
+}
 
-        .input-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
+.step{
+display:none;
+}
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 15px;
-        }
+.step.active{
+display:block;
+}
 
-        input {
-            width: 100%;
-            padding: 18px 20px;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            font-size: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #f8f9fa;
-            font-family: inherit;
-        }
+/* INPUT */
 
-        input:focus {
-            outline: none;
-            border-color: #f7931e;
-            background: #fff;
-            box-shadow: 0 10px 25px rgba(247, 147, 30, 0.15);
-            transform: translateY(-2px);
-        }
+.input-group{
+margin-bottom:16px;
+}
 
-        .btn {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-        }
+label{
+display:block;
+font-size:13px;
+font-weight:600;
+color:#374151;
+margin-bottom:5px;
+}
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
+input{
+width:100%;
+padding:14px 12px;
+border-radius:10px;
+border:1px solid #d1d5db;
+font-size:15px;
+background:#fff;
+transition:.25s;
+}
 
-        .btn:hover::before {
-            left: 100%;
-        }
+input:focus{
+outline:none;
+border-color:#0f4c81;
+box-shadow:0 0 0 3px rgba(15,76,129,0.12);
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 50%, #f7931e 100%);
-            color: #fff;
-            box-shadow: 0 10px 25px rgba(247, 147, 30, 0.3);
-        }
+/* BUTTONS */
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(247, 147, 30, 0.4);
-        }
+.btn{
+width:100%;
+border:none;
+border-radius:12px;
+padding:15px;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+transition:.25s;
+touch-action:manipulation;
+}
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-            color: #fff;
-        }
+.btn-primary{
+background:#0f4c81;
+color:#fff;
+}
 
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
-        }
+.btn-primary:hover{
+opacity:.9;
+}
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+.btn-secondary{
+background:#e5e7eb;
+color:#374151;
+margin-top:10px;
+}
 
-        .payment-tabs {
-            display: flex;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
+/* PAYMENT TABS */
 
-        .tab-btn {
-            flex: 1;
-            padding: 18px 10px;
-            border: none;
-            background: transparent;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #6c757d;
-            position: relative;
-        }
+.payment-tabs{
+display:flex;
+gap:6px;
+margin-bottom:16px;
+}
 
-        .tab-btn.active {
-            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
-            color: #fff;
-            box-shadow: 0 5px 15px rgba(247, 147, 30, 0.3);
-        }
+.tab-btn{
+flex:1;
+padding:11px;
+border-radius:9px;
+border:1px solid #e5e7eb;
+background:#fff;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+color:#374151;
+transition:.2s;
+}
 
-        .tab-btn:hover:not(.active) {
-            color: #495057;
-            background: rgba(247, 147, 30, 0.1);
-        }
+.tab-btn.active{
+background:#0f4c81;
+color:#fff;
+border-color:#0f4c81;
+}
 
-        .tab-content {
-            display: none;
-        }
+.tab-content{
+display:none;
+}
 
-        .tab-content.active {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
+.tab-content.active{
+display:block;
+}
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
+/* ALERTS */
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
+.error{
+background:#fee2e2;
+border:1px solid #fecaca;
+color:#991b1b;
+padding:12px;
+border-radius:10px;
+font-size:13px;
+margin-bottom:14px;
+display:none;
+}
 
-        .netbanking-grid {
-            display: grid;
-            gap: 20px;
-        }
+.success{
+background:#dcfce7;
+border:1px solid #bbf7d0;
+color:#166534;
+padding:14px;
+border-radius:10px;
+font-size:14px;
+text-align:center;
+display:none;
+}
 
-        .bank-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #fff;
-        }
+.success h3{
+margin-bottom:6px;
+}
 
-        .error, .success {
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            display: none;
-            font-weight: 500;
-            text-align: center;
-        }
+/* SMALL MOBILE */
 
-        .error {
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            color: #721c24;
-            border-left: 5px solid #dc3545;
-        }
+@media (max-width:360px){
 
-        .success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
-            border-left: 5px solid #28a745;
-        }
+.header h1{
+font-size:17px;
+}
 
-        @media (max-width: 480px) {
-            .container {
-                margin: 10px;
-                border-radius: 20px;
-            }
-            
-            .form-container {
-                padding: 30px 25px 25px;
-            }
-            
-            .card-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .header {
-                padding: 30px 20px;
-            }
-        }
+.logo{
+width:55px;
+height:55px;
+font-size:20px;
+}
+
+input{
+font-size:14px;
+padding:12px;
+}
+
+.btn{
+padding:13px;
+}
+
+}
+
+/* TABLET */
+
+@media (min-width:600px){
+
+body{
+padding:30px;
+}
+
+.container{
+max-width:500px;
+}
+
+.form-container{
+padding:28px;
+}
+
+}
+
+/* LARGE SCREEN */
+
+@media (min-width:900px){
+
+.container{
+max-width:520px;
+}
+
+}
     </style>
 </head>
 <body>
