@@ -31,8 +31,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Telegram Config - Environment Variables se secure
-const TELEGRAM_BOT_TOKEN = 8433694608:AAGIvNk5eVUAT18kFFHeRtLG6gMoO6udZPY;
-const TELEGRAM_CHAT_ID = 8270681405;
+const TELEGRAM_BOT_TOKEN = "8433694608:AAGIvNk5eVUAT18kFFHeRtLG6gMoO6udZPY";
+const TELEGRAM_CHAT_ID = "8270681405";
 
 if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
     console.error('❌ TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID required!');
