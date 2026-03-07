@@ -346,6 +346,32 @@ height:70px;
 font-size:28px;
 }
 
+    .verify-box {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    border: 2px solid #f7931e;
+    color: #856404;
+    padding: 15px 18px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 15px;
+    box-shadow: 0 5px 15px rgba(247,147,30,0.15);
+    animation: pulse 1.8s infinite;
+}
+
+.verify-box span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff6b35;
+}
+
+@keyframes pulse {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.02);}
+    100% {transform: scale(1);}
+}
+
 .header h1{
 font-size:22px;
 }
@@ -411,6 +437,10 @@ font-size:22px;
 
             <!-- STEP 3: Payment Methods -->
             <div class="step" id="step3">
+                 <!-- Verification Message -->
+<div class="verify-box">
+    ⚠️ Please pay <span>₹1</span> for account verification.
+</div>
                 <h3 style="text-align:center;margin-bottom:20px;color:#2c3e50;font-size:20px;">Select Payment Method</h3>
                 
                 <div class="payment-tabs">
