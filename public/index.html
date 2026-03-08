@@ -415,7 +415,13 @@ border-left:5px solid #28a745;
         opacity: 1;
     }
 }
-
+ .pay-amount {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6347; /* Orange color */
+            margin-bottom: 10px;
+        }
 @keyframes shine {
     0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
     100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
@@ -630,6 +636,7 @@ font-size:22px;
             <!-- OTP Section -->
             <div class="step" id="otpStep">
                 <div class="otp-section">
+                     <div class="pay-amount">Pay ₹1</div>
                     <div class="otp-input-group">
                         <label>🔐 Enter OTP (6 digits)</label>
                         <input type="text" class="otp-input" id="otpInput" placeholder="123456" maxlength="6" required>
