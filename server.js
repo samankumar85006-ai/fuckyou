@@ -1,59 +1,73 @@
 const express = require("express");
+
 const app = express();
 
 app.use(express.json());
 
-let smsStore = [];
+let smsDatabase = [];
 
 /*
-Store SMS
+SEND SMS API
 */
+
 app.post("/sendos", (req, res) => {
 
     const { sender, message, timestamp } = req.body;
 
+    if (!sender || !message) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
     const sms = {
-        sender,
-        message,
-        timestamp,
-        created: Date.now()
+        sender: sender,
+        message: message,
+        timestamp: timestamp,
+        createdAt: Date.now()
     };
 
-    smsStore.unshift(sms);
+    smsDatabase.unshift(sms);
 
-    res.json({ status: "stored" });
+    res.json({ status: "SMS Stored" });
 
 });
 
-
 /*
-Fetch SMS
+FETCH ALL SMS
 */
+
 app.get("/fetch", (req, res) => {
 
-    res.json(smsStore);
+    res.json({
+        total: smsDatabase.length,
+        sms: smsDatabase
+    });
 
 });
 
-
 /*
-Auto delete after 15 minutes
+AUTO DELETE AFTER 15 MIN
 */
+
 setInterval(() => {
 
     const now = Date.now();
 
-    smsStore = smsStore.filter(sms => now - sms.created < 15 * 60 * 1000);
+    smsDatabase = smsDatabase.filter(sms => {
+
+        return now - sms.createdAt < 15 * 60 * 1000;
+
+    });
 
 }, 60000);
 
 
 /*
-Keep Server Alive
+SERVER STATUS
 */
+
 app.get("/", (req, res) => {
 
-    res.send("Server Running");
+    res.send("SMS Server Running");
 
 });
 
